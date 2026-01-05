@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Menu Management</title>
+  <link rel="shortcut icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      min-height: 100vh;
+      font-family: var(--fontFamily-dm_sans);
+      font-size: var(--fontSize-body-4);
+    }
+
+    .login-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--eerie-black-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .login-container.hidden {
+      display: none;
+    }
+
+    .login-box {
+      background: var(--eerie-black-2);
+      padding: 50px 40px;
+      border-radius: 10px;
+      border: 2px solid var(--gold-crayola);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      color: var(--gold-crayola);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-headline-1);
+      margin-bottom: 20px;
+    }
+
+    .login-box p {
+      color: var(--quick-silver);
+      font-size: var(--fontSize-body-4);
+      margin-bottom: 30px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 15px;
+      background: var(--eerie-black-1);
+      border: 1px solid var(--white-alpha-10);
+      color: var(--white);
+      border-radius: 5px;
+      font-size: var(--fontSize-body-4);
+      font-family: var(--fontFamily-dm_sans);
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    .login-input:focus {
+      border-color: var(--gold-crayola);
+    }
+
+    .login-error {
+      color: #ff4444;
+      font-size: var(--fontSize-label-1);
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 20px 40px;
+      min-height: 100vh;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .admin-header h1 {
+      color: var(--gold-crayola);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-headline-1);
+      margin-bottom: 10px;
+    }
+
+    .admin-header p {
+      color: var(--quick-silver);
+      font-size: var(--fontSize-body-4);
+    }
+
+    .admin-nav {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .admin-nav a {
+      padding: 10px 20px;
+      background: var(--eerie-black-2);
+      border: 2px solid var(--gold-crayola);
+      color: var(--gold-crayola);
+      text-decoration: none;
+      border-radius: 5px;
+      transition: var(--transition-1);
+    }
+
+    .admin-nav a:hover {
+      background: var(--gold-crayola);
+      color: var(--black);
+    }
+
+    .section-manager {
+      background: var(--eerie-black-2);
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--gold-crayola);
+    }
+
+    .section-header h2 {
+      color: var(--gold-crayola);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-headline-2);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: 2px solid var(--gold-crayola);
+      background: transparent;
+      color: var(--gold-crayola);
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: var(--weight-bold);
+      font-size: var(--fontSize-label-2);
+      font-family: var(--fontFamily-dm_sans);
+      transition: var(--transition-1);
+    }
+
+    .btn:hover {
+      background: var(--gold-crayola);
+      color: var(--black);
+    }
+
+    .btn-danger {
+      border-color: #ff4444;
+      color: #ff4444;
+    }
+
+    .btn-danger:hover {
+      background: #ff4444;
+      color: var(--white);
+    }
+
+    .btn-success {
+      border-color: #44ff44;
+      color: #44ff44;
+    }
+
+    .btn-success:hover {
+      background: #44ff44;
+      color: var(--black);
+    }
+
+    .items-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .item-card {
+      background: var(--smoky-black-2);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--white-alpha-10);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .item-header h3 {
+      color: var(--white);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-title-3);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--gold-crayola);
+      margin-bottom: 8px;
+      font-weight: var(--weight-bold);
+      font-size: var(--fontSize-label-1);
+      font-family: var(--fontFamily-dm_sans);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: var(--eerie-black-1);
+      border: 1px solid var(--white-alpha-10);
+      color: var(--white);
+      border-radius: 5px;
+      font-size: var(--fontSize-body-4);
+      font-family: var(--fontFamily-dm_sans);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--gold-crayola);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group input[type="file"] {
+      cursor: pointer;
+    }
+
+    .form-group input[type="file"]::-webkit-file-upload-button {
+      background: var(--gold-crayola);
+      color: var(--black);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: var(--weight-bold);
+      margin-right: 10px;
+    }
+
+    .form-group input[type="checkbox"] {
+      accent-color: var(--gold-crayola);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--black-alpha-80);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--eerie-black-2);
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--gold-crayola);
+    }
+
+    .modal-header h2 {
+      color: var(--gold-crayola);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-headline-2);
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-modal:hover {
+      color: var(--gold-crayola);
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.success {
+      background: rgba(68, 255, 68, 0.2);
+      border: 1px solid #44ff44;
+      color: #44ff44;
+      display: block;
+    }
+
+    .alert.error {
+      background: rgba(255, 68, 68, 0.2);
+      border: 1px solid #ff4444;
+      color: #ff4444;
+      display: block;
+    }
+
+    .scroll-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: var(--gold-crayola);
+      color: var(--black);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      z-index: 999;
+      transition: var(--transition-1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .scroll-to-top:hover {
+      background: var(--white);
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .scroll-to-top.active {
+      display: flex;
+    }
+
+    .sections-container {
+      max-height: none;
+      overflow-y: visible;
+    }
+
+    .bookings-section {
+      background: var(--eerie-black-2);
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .bookings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--gold-crayola);
+    }
+
+    .bookings-header h2 {
+      color: var(--gold-crayola);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-headline-2);
+    }
+
+    .bookings-list {
+      display: grid;
+      gap: 20px;
+    }
+
+    .booking-card {
+      background: var(--smoky-black-2);
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid var(--white-alpha-10);
+      position: relative;
+    }
+
+    .booking-card.processed {
+      opacity: 0.6;
+      border-color: var(--gold-crayola);
+    }
+
+    .booking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .booking-info {
+      flex: 1;
+    }
+
+    .booking-name {
+      color: var(--white);
+      font-family: var(--fontFamily-forum);
+      font-size: var(--fontSize-title-3);
+      font-weight: var(--weight-regular);
+      margin-bottom: 5px;
+    }
+
+    .booking-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .booking-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .booking-detail-label {
+      color: var(--gold-crayola);
+      font-size: var(--fontSize-label-2);
+      font-weight: var(--weight-bold);
+      font-family: var(--fontFamily-dm_sans);
+      text-transform: uppercase;
+      letter-spacing: var(--letterSpacing-1);
+    }
+
+    .booking-detail-value {
+      color: var(--white);
+      font-size: var(--fontSize-body-4);
+      font-family: var(--fontFamily-dm_sans);
+    }
+
+    .booking-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .booking-status {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: var(--fontSize-label-2);
+      font-weight: var(--weight-bold);
+      font-family: var(--fontFamily-dm_sans);
+      text-transform: uppercase;
+    }
+
+    .booking-status.pending {
+      background: rgba(255, 200, 0, 0.2);
+      color: #ffc800;
+      border: 1px solid #ffc800;
+    }
+
+    .booking-status.processed {
+      background: rgba(68, 255, 68, 0.2);
+      color: #44ff44;
+      border: 1px solid #44ff44;
+    }
+
+    .booking-date-time {
+      color: var(--quick-silver);
+      font-size: var(--fontSize-label-2);
+      font-family: var(--fontFamily-dm_sans);
+      margin-top: 10px;
+    }
+
+    .no-bookings {
+      text-align: center;
+      padding: 40px;
+      color: var(--quick-silver);
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .admin-container {
+        padding: 100px 15px 30px;
+      }
+
+      .admin-header h1 {
+        font-size: 2rem;
+      }
+
+      .admin-nav {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .admin-nav a {
+        width: 100%;
+        text-align: center;
+      }
+
+      .section-manager,
+      .bookings-section {
+        padding: 20px 15px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .btn-group {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .btn-group .btn {
+        width: 100%;
+      }
+
+      .booking-details {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .booking-actions {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .booking-actions .btn {
+        width: 100%;
+      }
+
+      .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 20px auto;
+        padding: 20px 15px;
+      }
+
+      .login-box {
+        padding: 30px 20px;
+        margin: 20px;
+      }
+
+      .login-box h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-container {
+        padding: 90px 10px 20px;
+      }
+
+      .admin-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .item-header h3 {
+        font-size: 1.2rem;
+      }
+
+      .booking-name {
+        font-size: 1.2rem;
+      }
+
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px;
+        padding: 15px 10px;
+      }
+
+      .login-box {
+        padding: 25px 15px;
+        margin: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Login Screen -->
+  <div id="login-container" class="login-container">
+    <div class="login-box">
+      <h2>Admin Access</h2>
+      <p class="body-4">Enter password to access admin panel</p>
+      <input type="password" id="admin-password" class="login-input" placeholder="Enter Password" autocomplete="off">
+      <div id="login-error" class="login-error">Incorrect password. Please try again.</div>
+      <button type="button" class="btn btn-success" onclick="checkPassword()" style="width: 100%;">Login</button>
+      <p style="color: var(--quick-silver); font-size: var(--fontSize-label-2); margin-top: 20px;">
+        Default password: <strong style="color: var(--gold-crayola);">admin123</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="admin-container" id="admin-content" style="display: none;">
+    <div class="admin-header">
+      <h1>Menu Management</h1>
+      <p style="color: var(--quick-silver);">Manage your restaurant menu sections and items</p>
+    </div>
+
+    <div class="admin-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">View Menu</a>
+      <a href="book-table.html">Book Table</a>
+      <a href="#" onclick="location.reload()">Refresh</a>
+    </div>
+
+    <div id="alert-container"></div>
+
+    <!-- Bookings Section -->
+    <div class="bookings-section">
+      <div class="bookings-header">
+        <h2>Booking Details</h2>
+        <button class="btn" onclick="refreshBookings()">Refresh Bookings</button>
+      </div>
+      <div id="bookings-container">
+        <!-- Bookings will be loaded here -->
+      </div>
+    </div>
+
+    <div id="sections-container" class="sections-container">
+      <!-- Sections will be loaded here -->
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" class="scroll-to-top" onclick="scrollToTop()" aria-label="Scroll to top">
+      ↑
+    </button>
+
+    <!-- Add Section Modal -->
+    <div id="add-section-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add New Section</h2>
+          <button class="close-modal" onclick="closeModal('add-section-modal')">&times;</button>
+        </div>
+        <form id="add-section-form">
+          <div class="form-group">
+            <label>Section Name</label>
+            <input type="text" id="section-name" required placeholder="e.g., Beverages Menu">
+          </div>
+          <div class="form-group">
+            <label>Section ID (lowercase, no spaces)</label>
+            <input type="text" id="section-id" required placeholder="e.g., beverages">
+          </div>
+          <div class="btn-group">
+            <button type="submit" class="btn btn-success">Add Section</button>
+            <button type="button" class="btn" onclick="closeModal('add-section-modal')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="item-modal-title">Add Menu Item</h2>
+          <button class="close-modal" onclick="closeModal('item-modal')">&times;</button>
+        </div>
+        <form id="item-form">
+          <input type="hidden" id="item-section-id">
+          <input type="hidden" id="item-id">
+          <div class="form-group">
+            <label>Item Name</label>
+            <input type="text" id="item-name" required>
+          </div>
+            <div class="form-row">
+            <div class="form-group">
+              <label>Price (₹)</label>
+              <input type="number" id="item-price" step="1" required>
+            </div>
+            <div class="form-group">
+              <label>Badge (optional)</label>
+              <select id="item-badge">
+                <option value="">None</option>
+                <option value="Popular">Popular</option>
+                <option value="New">New</option>
+                <option value="Seasonal">Seasonal</option>
+                <option value="Chef's Choice">Chef's Choice</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Spicy">Spicy</option>
+                <option value="Premium">Premium</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Signature">Signature</option>
+                <option value="Fresh">Fresh</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="item-description" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Image</label>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-size: var(--fontSize-label-2); color: var(--quick-silver);">Upload Image (or select from default)</label>
+                <input type="file" id="item-image-upload" accept="image/*" style="width: 100%; padding: 10px; background: var(--eerie-black-1); border: 1px solid var(--white-alpha-10); color: var(--white); border-radius: 5px; font-size: var(--fontSize-body-4); font-family: var(--fontFamily-dm_sans);">
+                <div id="image-preview-container" style="margin-top: 10px; display: none;">
+                  <img id="image-preview" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 5px; border: 2px solid var(--gold-crayola);">
+                  <button type="button" onclick="clearImageUpload()" class="btn btn-danger" style="margin-top: 10px; padding: 8px 15px; font-size: var(--fontSize-label-2);">Remove Image</button>
+                </div>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-size: var(--fontSize-label-2); color: var(--quick-silver);">Or Select Default Image</label>
+                <select id="item-image">
+                  <option value="./assets/images/menu-1.png">Menu Image 1</option>
+                  <option value="./assets/images/menu-2.png">Menu Image 2</option>
+                  <option value="./assets/images/menu-3.png">Menu Image 3</option>
+                  <option value="./assets/images/menu-4.png">Menu Image 4</option>
+                  <option value="./assets/images/menu-5.png">Menu Image 5</option>
+                  <option value="./assets/images/menu-6.png">Menu Image 6</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="item-special-dish" style="width: 20px; height: 20px; cursor: pointer;">
+              <span>Mark as Special Dish</span>
+            </label>
+            <p style="color: var(--quick-silver); font-size: var(--fontSize-label-2); margin-top: 5px; font-style: italic;">Special dishes will be highlighted on the menu</p>
+          </div>
+          <div class="btn-group">
+            <button type="submit" class="btn btn-success">Save Item</button>
+            <button type="button" class="btn" onclick="closeModal('item-modal')">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/menu-manager.js"></script>
+  <script>
+    // Password protection
+    const ADMIN_PASSWORD = 'admin123'; // Default password - change this in production
+    
+    // Check if user is already logged in
+    function checkLoginStatus() {
+      const isLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+      if (isLoggedIn) {
+        showAdminContent();
+      } else {
+        showLoginScreen();
+      }
+    }
+
+    // Show login screen
+    function showLoginScreen() {
+      document.getElementById('login-container').classList.remove('hidden');
+      document.getElementById('admin-content').style.display = 'none';
+    }
+
+    // Show admin content
+    function showAdminContent() {
+      document.getElementById('login-container').classList.add('hidden');
+      document.getElementById('admin-content').style.display = 'block';
+    }
+
+    // Check password
+    function checkPassword() {
+      const password = document.getElementById('admin-password').value;
+      const errorDiv = document.getElementById('login-error');
+      
+      if (password === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        showAdminContent();
+        errorDiv.classList.remove('show');
+        document.getElementById('admin-password').value = '';
+      } else {
+        errorDiv.classList.add('show');
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-password').focus();
+      }
+    }
+
+    // Allow Enter key to submit
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordInput = document.getElementById('admin-password');
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            checkPassword();
+          }
+        });
+      }
+      checkLoginStatus();
+    });
+
+    let currentEditingSectionId = null;
+    let currentEditingItemId = null;
+
+    // Show alert
+    function showAlert(message, type = 'success') {
+      const alertContainer = document.getElementById('alert-container');
+      alertContainer.innerHTML = `<div class="alert ${type}">${message}</div>`;
+      setTimeout(() => {
+        alertContainer.innerHTML = '';
+      }, 3000);
+    }
+
+    // Close modal
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      if (modalId === 'item-modal') {
+        document.getElementById('item-form').reset();
+        clearImageUpload();
+        currentEditingItemId = null;
+        currentEditingSectionId = null;
+        uploadedImageData = null;
+      }
+    }
+
+    // Open modal
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    // Load and render sections
+    function renderSections() {
+      const menuData = getMenuData();
+      const container = document.getElementById('sections-container');
+      container.innerHTML = '';
+
+      menuData.sections.forEach(section => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'section-manager';
+        
+        // Collect all items from categories or items
+        let allItems = [];
+        if (section.categories && section.categories.length > 0) {
+          section.categories.forEach(cat => {
+            allItems = allItems.concat(cat.items);
+          });
+        } else if (section.items) {
+          allItems = section.items;
+        }
+        
+        sectionDiv.innerHTML = `
+          <div class="section-header">
+            <h2>${section.name}</h2>
+            <div class="btn-group">
+              <button class="btn btn-success" onclick="openAddItemModal('${section.id}')">Add Item</button>
+              <button class="btn btn-danger" onclick="deleteSection('${section.id}')">Delete Section</button>
+            </div>
+          </div>
+          <div class="items-list" id="items-${section.id}">
+            ${renderItems(allItems, section.id)}
+          </div>
+        `;
+        container.appendChild(sectionDiv);
+      });
+    }
+
+    // Render items for a section
+    function renderItems(items, sectionId) {
+      if (items.length === 0) {
+        return '<p style="color: var(--quick-silver); text-align: center; padding: 20px;">No items in this section</p>';
+      }
+      return items.map(item => {
+        const imageSrc = item.imageData || item.image || './assets/images/menu-1.png';
+        const specialDishIndicator = item.isSpecialDish ? '<span style="background: var(--gold-crayola); color: var(--black); padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; font-weight: bold; margin-left: 10px;">⭐ Special</span>' : '';
+        return `
+        <div class="item-card" ${item.isSpecialDish ? 'style="border: 2px solid var(--gold-crayola);"' : ''}>
+          <div class="item-header">
+            <h3>${item.name} ${specialDishIndicator}</h3>
+            <div class="btn-group">
+              <button class="btn" onclick="editItem('${sectionId}', '${item.id}')">Edit</button>
+              <button class="btn btn-danger" onclick="deleteItem('${sectionId}', '${item.id}')">Delete</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: center;">
+            <img src="${imageSrc}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; border: 1px solid var(--white-alpha-10);">
+            <div style="flex: 1;">
+              <p style="color: var(--quick-silver); margin-bottom: 10px;">${item.description || 'No description'}</p>
+              <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <span style="color: var(--gold-crayola); font-size: 1.2rem; font-weight: bold;">₹${item.price || 0}</span>
+                ${item.badge ? `<span style="background: var(--gold-crayola); color: var(--black); padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">${item.badge}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    // Add section
+    document.getElementById('add-section-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('section-name').value;
+      const id = document.getElementById('section-id').value.toLowerCase().replace(/\s+/g, '-');
+
+      const menuData = getMenuData();
+      if (menuData.sections.find(s => s.id === id)) {
+        showAlert('Section ID already exists!', 'error');
+        return;
+      }
+
+      menuData.sections.push({
+        id: id,
+        name: name,
+        items: []
+      });
+
+      saveMenuData(menuData);
+      renderSections();
+      closeModal('add-section-modal');
+      showAlert('Section added successfully!');
+      document.getElementById('add-section-form').reset();
+    });
+
+    // Delete section
+    function deleteSection(sectionId) {
+      if (!confirm('Are you sure you want to delete this section? All items will be deleted too.')) return;
+
+      const menuData = getMenuData();
+      menuData.sections = menuData.sections.filter(s => s.id !== sectionId);
+      saveMenuData(menuData);
+      renderSections();
+      showAlert('Section deleted successfully!');
+    }
+
+    // Open add item modal
+    function openAddItemModal(sectionId) {
+      currentEditingSectionId = sectionId;
+      currentEditingItemId = null;
+      document.getElementById('item-modal-title').textContent = 'Add Menu Item';
+      document.getElementById('item-section-id').value = sectionId;
+      document.getElementById('item-form').reset();
+      clearImageUpload();
+      openModal('item-modal');
+    }
+
+    // Handle image upload preview
+    let uploadedImageData = null;
+    document.getElementById('item-image-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          showAlert('Image size must be less than 5MB', 'error');
+          e.target.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          uploadedImageData = event.target.result;
+          document.getElementById('image-preview').src = uploadedImageData;
+          document.getElementById('image-preview-container').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Clear image upload
+    function clearImageUpload() {
+      document.getElementById('item-image-upload').value = '';
+      uploadedImageData = null;
+      document.getElementById('image-preview-container').style.display = 'none';
+      document.getElementById('image-preview').src = '';
+    }
+
+    // Edit item
+    function editItem(sectionId, itemId) {
+      const menuData = getMenuData();
+      const section = menuData.sections.find(s => s.id === sectionId);
+      let item = null;
+      
+      // Find item in categories or items
+      if (section.categories) {
+        for (let cat of section.categories) {
+          item = cat.items.find(i => i.id === itemId);
+          if (item) break;
+        }
+      } else {
+        item = section.items.find(i => i.id === itemId);
+      }
+
+      if (!item) return;
+
+      currentEditingSectionId = sectionId;
+      currentEditingItemId = itemId;
+      document.getElementById('item-modal-title').textContent = 'Edit Menu Item';
+      document.getElementById('item-section-id').value = sectionId;
+      document.getElementById('item-id').value = itemId;
+      document.getElementById('item-name').value = item.name;
+      document.getElementById('item-price').value = item.price;
+      document.getElementById('item-description').value = item.description || '';
+      document.getElementById('item-image').value = item.image || './assets/images/menu-1.png';
+      document.getElementById('item-badge').value = item.badge || '';
+      document.getElementById('item-special-dish').checked = item.isSpecialDish || false;
+      
+      // Show existing image if available
+      if (item.imageData) {
+        uploadedImageData = item.imageData;
+        document.getElementById('image-preview').src = item.imageData;
+        document.getElementById('image-preview-container').style.display = 'block';
+      } else {
+        clearImageUpload();
+      }
+      
+      openModal('item-modal');
+    }
+
+    // Save item (add or edit)
+    document.getElementById('item-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const menuData = getMenuData();
+      const section = menuData.sections.find(s => s.id === currentEditingSectionId);
+
+      const itemData = {
+        name: document.getElementById('item-name').value,
+        price: parseFloat(document.getElementById('item-price').value),
+        description: document.getElementById('item-description').value,
+        image: document.getElementById('item-image').value,
+        badge: document.getElementById('item-badge').value || null,
+        isSpecialDish: document.getElementById('item-special-dish').checked || false,
+        imageData: uploadedImageData || null
+      };
+
+      // Find the item location (could be in categories or items)
+      let targetItems = null;
+      let itemIndex = -1;
+      
+      if (section.categories) {
+        // Find item in categories
+        for (let cat of section.categories) {
+          if (currentEditingItemId) {
+            itemIndex = cat.items.findIndex(i => i.id === currentEditingItemId);
+            if (itemIndex !== -1) {
+              targetItems = cat.items;
+              break;
+            }
+          } else {
+            // Add to first category if adding new item
+            if (cat.items.length > 0 || section.categories.indexOf(cat) === 0) {
+              targetItems = cat.items;
+              break;
+            }
+          }
+        }
+      } else {
+        targetItems = section.items;
+        if (currentEditingItemId) {
+          itemIndex = section.items.findIndex(i => i.id === currentEditingItemId);
+        }
+      }
+
+      if (!targetItems) {
+        // Fallback: use section.items or create items array
+        if (!section.items) section.items = [];
+        targetItems = section.items;
+        if (currentEditingItemId) {
+          itemIndex = section.items.findIndex(i => i.id === currentEditingItemId);
+        }
+      }
+
+      if (currentEditingItemId && itemIndex !== -1) {
+        // Edit existing item
+        itemData.id = currentEditingItemId;
+        // Preserve existing properties
+        const existingItem = targetItems[itemIndex];
+        Object.keys(existingItem).forEach(key => {
+          if (!itemData.hasOwnProperty(key) && key !== 'id') {
+            itemData[key] = existingItem[key];
+          }
+        });
+        targetItems[itemIndex] = itemData;
+        showAlert('Item updated successfully!');
+      } else {
+        // Add new item
+        itemData.id = `${currentEditingSectionId}-${Date.now()}`;
+        targetItems.push(itemData);
+        showAlert('Item added successfully!');
+      }
+
+      saveMenuData(menuData);
+      renderSections();
+      closeModal('item-modal');
+      clearImageUpload();
+    });
+
+    // Delete item
+    function deleteItem(sectionId, itemId) {
+      if (!confirm('Are you sure you want to delete this item?')) return;
+
+      const menuData = getMenuData();
+      const section = menuData.sections.find(s => s.id === sectionId);
+      
+      // Delete from categories or items
+      if (section.categories) {
+        section.categories.forEach(cat => {
+          cat.items = cat.items.filter(i => i.id !== itemId);
+        });
+      } else if (section.items) {
+        section.items = section.items.filter(i => i.id !== itemId);
+      }
+      
+      saveMenuData(menuData);
+      renderSections();
+      showAlert('Item deleted successfully!');
+    }
+
+    // Add section button
+    function showAddSectionModal() {
+      document.getElementById('add-section-form').reset();
+      openModal('add-section-modal');
+    }
+
+    // Scroll to top function
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // Show/hide scroll to top button
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        scrollToTopBtn.classList.add('active');
+      } else {
+        scrollToTopBtn.classList.remove('active');
+      }
+    });
+
+    // ========== BOOKINGS MANAGEMENT ==========
+
+    // Get bookings from localStorage
+    function getBookings() {
+      return JSON.parse(localStorage.getItem('bookings') || '[]');
+    }
+
+    // Save bookings to localStorage
+    function saveBookings(bookings) {
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+
+    // Format time for display
+    function formatTime(timeString) {
+      if (!timeString) return 'N/A';
+      return timeString.replace(':', ' : ');
+    }
+
+    // Render bookings
+    function renderBookings() {
+      const bookings = getBookings();
+      const container = document.getElementById('bookings-container');
+
+      if (bookings.length === 0) {
+        container.innerHTML = '<div class="no-bookings"><p>No bookings found. Bookings will appear here when customers make reservations.</p></div>';
+        return;
+      }
+
+      // Sort bookings by date (newest first)
+      const sortedBookings = bookings.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB - dateA;
+      });
+
+      container.innerHTML = sortedBookings.map((booking, index) => {
+        const isProcessed = booking.processed || false;
+        const bookingDate = booking.date ? formatDate(booking.date) : 'N/A';
+        const bookingTime = booking.time ? formatTime(booking.time) : 'N/A';
+        const submittedDate = booking.timestamp ? formatDate(booking.timestamp) : 'N/A';
+
+        return `
+          <div class="booking-card ${isProcessed ? 'processed' : ''}">
+            <div class="booking-header">
+              <div class="booking-info">
+                <div class="booking-name">${booking.name || 'N/A'}</div>
+                <div class="booking-date-time">Submitted: ${submittedDate}</div>
+              </div>
+              <div class="booking-actions">
+                <span class="booking-status ${isProcessed ? 'processed' : 'pending'}">
+                  ${isProcessed ? 'Processed' : 'Pending'}
+                </span>
+                ${!isProcessed ? `<button class="btn btn-success" onclick="markAsProcessed(${index})">Mark Processed</button>` : ''}
+                <button class="btn btn-danger" onclick="deleteBooking(${index})">Delete</button>
+              </div>
+            </div>
+            <div class="booking-details">
+              <div class="booking-detail-item">
+                <span class="booking-detail-label">Phone</span>
+                <span class="booking-detail-value">${booking.phone || 'N/A'}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="booking-detail-label">Email</span>
+                <span class="booking-detail-value">${booking.email || 'N/A'}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="booking-detail-label">Guests</span>
+                <span class="booking-detail-value">${booking.guests ? booking.guests.replace('-person', '') : 'N/A'}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="booking-detail-label">Date</span>
+                <span class="booking-detail-value">${bookingDate}</span>
+              </div>
+              <div class="booking-detail-item">
+                <span class="booking-detail-label">Time</span>
+                <span class="booking-detail-value">${bookingTime}</span>
+              </div>
+            </div>
+            ${booking.message ? `
+              <div class="booking-detail-item" style="margin-top: 15px;">
+                <span class="booking-detail-label">Special Requests</span>
+                <span class="booking-detail-value" style="color: var(--quick-silver); font-style: italic;">${booking.message}</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Mark booking as processed
+    function markAsProcessed(index) {
+      const bookings = getBookings();
+      if (bookings[index]) {
+        bookings[index].processed = true;
+        saveBookings(bookings);
+        renderBookings();
+        showAlert('Booking marked as processed!');
+      }
+    }
+
+    // Delete booking
+    function deleteBooking(index) {
+      if (!confirm('Are you sure you want to delete this booking?')) return;
+
+      const bookings = getBookings();
+      bookings.splice(index, 1);
+      saveBookings(bookings);
+      renderBookings();
+      showAlert('Booking deleted successfully!');
+    }
+
+    // Refresh bookings
+    function refreshBookings() {
+      renderBookings();
+      showAlert('Bookings refreshed!');
+    }
+
+    // Initialize
+    initializeMenuData();
+    renderSections();
+    renderBookings();
+
+    // Add button to show add section modal
+    const adminHeader = document.querySelector('.admin-header');
+    const addSectionBtn = document.createElement('button');
+    addSectionBtn.className = 'btn btn-success';
+    addSectionBtn.textContent = 'Add New Section';
+    addSectionBtn.style.marginTop = '20px';
+    addSectionBtn.onclick = showAddSectionModal;
+    adminHeader.appendChild(addSectionBtn);
+  </script>
+</body>
+
+</html>
+
