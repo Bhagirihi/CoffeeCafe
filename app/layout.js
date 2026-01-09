@@ -18,12 +18,14 @@ export const metadata = {
   title: "Le Crumb - Bakery & Pastry Shop",
   description:
     "Le Crumb is a bakery and pastry shop that offers a wide range of bread, cakes, and pastries. We are committed to using the best ingredients and traditional recipes to create delicious and high-quality products.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className={`${dmSans.variable} ${forum.variable}`}>

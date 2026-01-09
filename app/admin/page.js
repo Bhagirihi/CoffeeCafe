@@ -24,6 +24,7 @@ export default function AdminPage() {
   const [alert, setAlert] = useState({ show: false, message: '', type: 'success' });
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [uploadedImageData, setUploadedImageData] = useState(null);
+  const [expandedBookings, setExpandedBookings] = useState({});
   const [itemFormData, setItemFormData] = useState({
     name: '',
     price: '',
@@ -644,7 +645,7 @@ export default function AdminPage() {
                 fontFamily: 'var(--fontFamily-dm_sans)'
               }}
             >
-              Refresh Subscriptions
+              Refresh
             </button>
           </div>
           <div id="subscriptions-container">
@@ -763,6 +764,8 @@ export default function AdminPage() {
                 const bookingDate = booking.date ? formatDate(booking.date) : 'N/A';
                 const bookingTime = booking.time ? formatTime(booking.time) : 'N/A';
                 const submittedDate = booking.timestamp || booking.createdAt ? formatDate(booking.timestamp || booking.createdAt) : 'N/A';
+                const isExpanded = expandedBookings[index] || false;
+                const guests = booking.guests ? booking.guests.replace('-person', '') : 'N/A';
 
                 return (
                   <div
@@ -776,32 +779,71 @@ export default function AdminPage() {
                       opacity: isProcessed ? 0.6 : 1
                     }}
                   >
+                    {/* Highlighted Info: Name, Date, Persons */}
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
                       marginBottom: '15px',
                       flexWrap: 'wrap',
-                      gap: '10px'
+                      gap: '15px',
+                      padding: '15px',
+                      background: 'var(--eerie-black-1)',
+                      borderRadius: '8px',
+                      border: '2px solid var(--gold-crayola)'
                     }}>
                       <div style={{ flex: 1 }}>
                         <div style={{
-                          color: 'var(--white)',
+                          color: 'var(--gold-crayola)',
                           fontFamily: 'var(--fontFamily-forum)',
-                          fontSize: 'var(--fontSize-title-3)',
-                          marginBottom: '5px'
+                          fontSize: 'var(--fontSize-title-2)',
+                          fontWeight: 'bold',
+                          marginBottom: '10px'
                         }}>
                           {booking.name || 'N/A'}
                         </div>
                         <div style={{
-                          color: 'var(--quick-silver)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          marginTop: '10px'
+                          display: 'flex',
+                          gap: '20px',
+                          flexWrap: 'wrap'
                         }}>
-                          Submitted: {submittedDate}
+                          <div>
+                            <div style={{
+                              color: 'var(--quick-silver)',
+                              fontSize: 'var(--fontSize-label-2)',
+                              textTransform: 'uppercase',
+                              marginBottom: '5px'
+                            }}>
+                              Date
+                            </div>
+                            <div style={{
+                              color: 'var(--gold-crayola)',
+                              fontSize: 'var(--fontSize-body-3)',
+                              fontWeight: 'bold'
+                            }}>
+                              {bookingDate}
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{
+                              color: 'var(--quick-silver)',
+                              fontSize: 'var(--fontSize-label-2)',
+                              textTransform: 'uppercase',
+                              marginBottom: '5px'
+                            }}>
+                              Persons
+                            </div>
+                            <div style={{
+                              color: 'var(--gold-crayola)',
+                              fontSize: 'var(--fontSize-body-3)',
+                              fontWeight: 'bold'
+                            }}>
+                              {guests}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                         <span style={{
                           display: 'inline-block',
                           padding: '5px 12px',
@@ -849,99 +891,119 @@ export default function AdminPage() {
                         </button>
                       </div>
                     </div>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '15px',
-                      marginTop: '15px'
-                    }}>
-                      <div>
-                        <div style={{
+                    
+                    {/* Accordion for Additional Details */}
+                    <div>
+                      <button
+                        onClick={() => setExpandedBookings({ ...expandedBookings, [index]: !isExpanded })}
+                        style={{
+                          width: '100%',
+                          padding: '12px 20px',
+                          background: 'var(--eerie-black-1)',
+                          border: '1px solid var(--white-alpha-10)',
                           color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
+                          cursor: 'pointer',
+                          borderRadius: '5px',
                           fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
-                        }}>
-                          Phone
-                        </div>
-                        <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
-                          {booking.phone || 'N/A'}
-                        </div>
-                      </div>
-                      <div>
+                          fontSize: 'var(--fontSize-label-1)',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <span>View Details</span>
+                        <span style={{ fontSize: '1.2rem' }}>{isExpanded ? '−' : '+'}</span>
+                      </button>
+                      {isExpanded && (
                         <div style={{
-                          color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
+                          marginTop: '15px',
+                          padding: '20px',
+                          background: 'var(--eerie-black-1)',
+                          borderRadius: '8px',
+                          border: '1px solid var(--white-alpha-10)'
                         }}>
-                          Email
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: '15px',
+                            marginBottom: '15px'
+                          }}>
+                            <div>
+                              <div style={{
+                                color: 'var(--gold-crayola)',
+                                fontSize: 'var(--fontSize-label-2)',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                marginBottom: '5px'
+                              }}>
+                                Phone
+                              </div>
+                              <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
+                                {booking.phone || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{
+                                color: 'var(--gold-crayola)',
+                                fontSize: 'var(--fontSize-label-2)',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                marginBottom: '5px'
+                              }}>
+                                Email
+                              </div>
+                              <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
+                                {booking.email || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{
+                                color: 'var(--gold-crayola)',
+                                fontSize: 'var(--fontSize-label-2)',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                marginBottom: '5px'
+                              }}>
+                                Time
+                              </div>
+                              <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
+                                {bookingTime}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{
+                                color: 'var(--gold-crayola)',
+                                fontSize: 'var(--fontSize-label-2)',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                marginBottom: '5px'
+                              }}>
+                                Submitted
+                              </div>
+                              <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
+                                {submittedDate}
+                              </div>
+                            </div>
+                          </div>
+                          {booking.message && (
+                            <div style={{ marginTop: '15px' }}>
+                              <div style={{
+                                color: 'var(--gold-crayola)',
+                                fontSize: 'var(--fontSize-label-2)',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                marginBottom: '5px'
+                              }}>
+                                Special Requests
+                              </div>
+                              <div style={{ color: 'var(--quick-silver)', fontStyle: 'italic' }}>
+                                {booking.message}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
-                          {booking.email || 'N/A'}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{
-                          color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
-                        }}>
-                          Guests
-                        </div>
-                        <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
-                          {booking.guests ? booking.guests.replace('-person', '') : 'N/A'}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{
-                          color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
-                        }}>
-                          Date
-                        </div>
-                        <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
-                          {bookingDate}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{
-                          color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
-                        }}>
-                          Time
-                        </div>
-                        <div style={{ color: 'var(--white)', fontSize: 'var(--fontSize-body-4)' }}>
-                          {bookingTime}
-                        </div>
-                      </div>
+                      )}
                     </div>
-                    {booking.message && (
-                      <div style={{ marginTop: '15px' }}>
-                        <div style={{
-                          color: 'var(--gold-crayola)',
-                          fontSize: 'var(--fontSize-label-2)',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: '5px'
-                        }}>
-                          Special Requests
-                        </div>
-                        <div style={{ color: 'var(--quick-silver)', fontStyle: 'italic' }}>
-                          {booking.message}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 );
               })
@@ -1007,7 +1069,7 @@ export default function AdminPage() {
                       fontSize: 'var(--fontSize-label-2)'
                     }}
                   >
-                    Add Item
+                    Add
                   </button>
                   <button
                     onClick={() => handleDeleteSection(section.id)}
@@ -1022,7 +1084,7 @@ export default function AdminPage() {
                       fontSize: 'var(--fontSize-label-2)'
                     }}
                   >
-                    Delete Section
+                    Delete
                   </button>
                 </div>
               </div>
@@ -1046,89 +1108,52 @@ export default function AdminPage() {
                       >
                         <div style={{
                           display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: '15px'
-                        }}>
-                          <h3 style={{
-                            color: 'var(--white)',
-                            fontFamily: 'var(--fontFamily-forum)',
-                            fontSize: 'var(--fontSize-title-3)'
-                          }}>
-                            {item.name}
-                            {item.isSpecialDish && (
-                              <span style={{
-                                background: 'var(--gold-crayola)',
-                                color: 'var(--black)',
-                                padding: '4px 10px',
-                                borderRadius: '4px',
-                                fontSize: '0.9rem',
-                                fontWeight: 'bold',
-                                marginLeft: '10px'
-                              }}>
-                                ⭐ Special
-                              </span>
-                            )}
-                          </h3>
-                          <div style={{ display: 'flex', gap: '10px' }}>
-                            <button
-                              onClick={() => openEditItemModal(section.id, item.id)}
-                              style={{
-                                padding: '10px 20px',
-                                border: '2px solid var(--gold-crayola)',
-                                background: 'transparent',
-                                color: 'var(--gold-crayola)',
-                                cursor: 'pointer',
-                                borderRadius: '5px',
-                                fontWeight: 'bold',
-                                fontSize: 'var(--fontSize-label-2)'
-                              }}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteItem(section.id, item.id)}
-                              style={{
-                                padding: '10px 20px',
-                                border: '2px solid #ff4444',
-                                background: 'transparent',
-                                color: '#ff4444',
-                                cursor: 'pointer',
-                                borderRadius: '5px',
-                                fontWeight: 'bold',
-                                fontSize: 'var(--fontSize-label-2)'
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                        <div style={{
-                          display: 'flex',
                           gap: '15px',
                           marginBottom: '15px',
-                          alignItems: 'center'
+                          alignItems: 'flex-start'
                         }}>
                           <Image
                             src={imageSrc}
                             alt={item.name}
-                            width={80}
-                            height={80}
+                            width={100}
+                            height={100}
                             style={{
                               borderRadius: '5px',
                               border: '1px solid var(--white-alpha-10)',
-                              objectFit: 'cover'
+                              objectFit: 'cover',
+                              flexShrink: 0
                             }}
                             unoptimized
                           />
                           <div style={{ flex: 1 }}>
+                            <h3 style={{
+                              color: 'var(--white)',
+                              fontFamily: 'var(--fontFamily-forum)',
+                              fontSize: 'var(--fontSize-title-3)',
+                              marginBottom: '10px'
+                            }}>
+                              {item.name}
+                              {item.isSpecialDish && (
+                                <span style={{
+                                  background: 'var(--gold-crayola)',
+                                  color: 'var(--black)',
+                                  padding: '4px 10px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.9rem',
+                                  fontWeight: 'bold',
+                                  marginLeft: '10px'
+                                }}>
+                                  ⭐ Special
+                                </span>
+                              )}
+                            </h3>
                             <p style={{ color: 'var(--quick-silver)', marginBottom: '10px' }}>
                               {item.description || 'No description'}
                             </p>
                             <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
                               <span style={{
                                 color: 'var(--gold-crayola)',
-                                fontSize: '1.2rem',
+                                fontSize: '1.8rem',
                                 fontWeight: 'bold'
                               }}>
                                 ₹{item.price || 0}
@@ -1146,6 +1171,44 @@ export default function AdminPage() {
                               )}
                             </div>
                           </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          gap: '10px',
+                          justifyContent: 'flex-end',
+                          paddingTop: '15px',
+                          borderTop: '1px solid var(--white-alpha-10)'
+                        }}>
+                          <button
+                            onClick={() => openEditItemModal(section.id, item.id)}
+                            style={{
+                              padding: '10px 20px',
+                              border: '2px solid var(--gold-crayola)',
+                              background: 'transparent',
+                              color: 'var(--gold-crayola)',
+                              cursor: 'pointer',
+                              borderRadius: '5px',
+                              fontWeight: 'bold',
+                              fontSize: 'var(--fontSize-label-2)'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteItem(section.id, item.id)}
+                            style={{
+                              padding: '10px 20px',
+                              border: '2px solid #ff4444',
+                              background: 'transparent',
+                              color: '#ff4444',
+                              cursor: 'pointer',
+                              borderRadius: '5px',
+                              fontWeight: 'bold',
+                              fontSize: 'var(--fontSize-label-2)'
+                            }}
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     );

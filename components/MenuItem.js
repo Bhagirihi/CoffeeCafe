@@ -59,7 +59,7 @@ export default function MenuItem({ item }) {
             unoptimized
           />
         </figure>
-        <div>
+        <div style={{ flex: 1 }}>
           <div className="title-wrapper">
             <h3 className="title-3">
               <Link href="#" className="card-title">
@@ -68,7 +68,13 @@ export default function MenuItem({ item }) {
             </h3>
             {item.badge && <span className="badge label-1">{item.badge}</span>}
             {specialDishBadge}
-            <span className="span title-2">{priceDisplay}</span>
+            <span className="span title-2" style={{ 
+              fontSize: '1.8rem', 
+              fontWeight: 'bold',
+              color: 'var(--gold-crayola)'
+            }}>
+              {priceDisplay}
+            </span>
           </div>
           {description && <p className="card-text label-1">{description}</p>}
 

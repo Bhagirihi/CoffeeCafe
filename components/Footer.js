@@ -73,7 +73,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-top grid-list">
           {/* Left Column - Navigation Links */}
-          <ul className="footer-list" style={{ textAlign: "right" }}>
+          <ul className="footer-list" style={{ textAlign: "left" }}>
             <li>
               <Link href="/" className="label-2 footer-link hover-underline">
                 HOME
@@ -207,7 +207,7 @@ export default function Footer() {
           <ul
             className="footer-list"
             style={{
-              textAlign: "left",
+              textAlign: "center",
               backgroundImage: "url('/assets/images/footer-bg.jpg')",
               backgroundSize: "cover",
               backgroundPosition: "center",
