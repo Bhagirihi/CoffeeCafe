@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import TopBar from '../../components/TopBar';
@@ -112,23 +113,23 @@ export default function MenuPage() {
                 </Link>
               </div>
 
-              <img
+              <Image
                 src="/assets/images/shape-5.png"
                 width={921}
                 height={1036}
                 loading="lazy"
                 alt="shape"
                 className="shape shape-2 move-anim"
-                style={{ position: 'absolute', zIndex: -1 }}
+                unoptimized
               />
-              <img
+              <Image
                 src="/assets/images/shape-6.png"
                 width={343}
                 height={345}
                 loading="lazy"
                 alt="shape"
                 className="shape shape-3 move-anim"
-                style={{ position: 'absolute', zIndex: -1 }}
+                unoptimized
               />
             </div>
           </section>

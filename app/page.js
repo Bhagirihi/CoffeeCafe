@@ -6,6 +6,9 @@ import Footer from "../components/Footer";
 import TopBar from "../components/TopBar";
 import Preloader from "../components/Preloader";
 import MenuItem from "../components/MenuItem";
+import ServiceSection from "../components/ServiceSection";
+import AboutSection from "../components/AboutSection";
+import FeaturesSection from "../components/FeaturesSection";
 import Image from "next/image";
 import Link from "next/link";
 import { useMenu } from "../hooks/useMenu";
@@ -133,31 +136,41 @@ export default function Home() {
             </button>
           </section>
 
+          {/* Service Section - Flavors For Royalty */}
+          <ServiceSection />
+
           {/* Special Dish Section */}
           {specialDish && (
-            <section className="special-dish" aria-label="special dish">
-              <div className="container">
-                <div className="special-dish-banner img-holder has-after">
+            <section
+              className="special-dish text-center"
+              aria-label="special dish"
+            >
+              <div className="special-dish-banner">
+                <Image
+                  src={
+                    specialDish.imageData ||
+                    specialDish.image ||
+                    "/assets/images/special-dish-banner.jpg"
+                  }
+                  width={940}
+                  height={900}
+                  alt="special dish"
+                  className="img-cover"
+                  unoptimized
+                />
+              </div>
+              <div className="special-dish-content bg-black-10">
+                <div className="container">
                   <Image
-                    src={
-                      specialDish.imageData ||
-                      specialDish.image ||
-                      "/assets/images/special-dish-banner.jpg"
-                    }
-                    width={940}
-                    height={900}
-                    alt="special dish"
-                    className="img-cover"
+                    src="/assets/images/badge-1.png"
+                    width={28}
+                    height={41}
+                    loading="lazy"
+                    alt="badge"
+                    className="abs-img"
                     unoptimized
                   />
-                  <div className="abs-content" data-aos="fade-in">
-                    <p className="body-1 label-2">₹{specialDish.price}</p>
-                  </div>
-                </div>
-                <div className="special-dish-content bg-black-10">
-                  <p className="section-subtitle label-2 text-center">
-                    Special Dish
-                  </p>
+                  <p className="section-subtitle label-2">Special Dish</p>
                   <h2
                     className="headline-1 section-title"
                     style={{
@@ -185,8 +198,29 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              <Image
+                src="/assets/images/shape-4.png"
+                width={179}
+                height={359}
+                loading="lazy"
+                alt=""
+                className="shape shape-1"
+                unoptimized
+              />
+              <Image
+                src="/assets/images/shape-9.png"
+                width={351}
+                height={462}
+                loading="lazy"
+                alt=""
+                className="shape shape-2"
+                unoptimized
+              />
             </section>
           )}
+
+          {/* About Section - Our Story */}
+          <AboutSection />
 
           {/* Menu Preview Section */}
           <section className="section menu" aria-label="menu" id="menu">
@@ -202,14 +236,41 @@ export default function Home() {
                   <MenuItem key={item.id || index} item={item} />
                 ))}
               </ul>
+              <p className="menu-text text-center">
+                During winter daily from <span className="span">7:00 pm</span>{" "}
+                to <span className="span">9:00 pm</span>
+              </p>
+
               <Link href="/menu" className="btn btn-primary">
                 <span className="text text-1">View All Menu</span>
                 <span className="text text-2" aria-hidden="true">
                   View All Menu
                 </span>
               </Link>
+
+              <Image
+                src="/assets/images/shape-5.png"
+                width={921}
+                height={1036}
+                loading="lazy"
+                alt="shape"
+                className="shape shape-2 move-anim"
+                unoptimized
+              />
+              <Image
+                src="/assets/images/shape-6.png"
+                width={343}
+                height={345}
+                loading="lazy"
+                alt="shape"
+                className="shape shape-3 move-anim"
+                unoptimized
+              />
             </div>
           </section>
+
+          {/* Features Section - Why Choose Us */}
+          <FeaturesSection />
         </article>
       </main>
 

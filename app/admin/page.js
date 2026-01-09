@@ -127,7 +127,7 @@ export default function AdminPage() {
       sections: [...menuData.sections, newSection]
     };
 
-    updateMenuData(updatedData);
+    updateMenuDataAndSync(updatedData);
     setShowSectionModal(false);
     showAlert('Section added successfully!');
     e.target.reset();
@@ -230,7 +230,7 @@ export default function AdminPage() {
       showAlert('Item added successfully!');
     }
 
-    updateMenuData(updatedData);
+    updateMenuDataAndSync(updatedData);
     setShowItemModal(false);
     setUploadedImageData(null);
   };
@@ -250,7 +250,7 @@ export default function AdminPage() {
       section.items = section.items.filter(i => i.id !== itemId);
     }
 
-    updateMenuData(updatedData);
+    updateMenuDataAndSync(updatedData);
     showAlert('Item deleted successfully!');
   };
 
@@ -261,7 +261,7 @@ export default function AdminPage() {
       sections: menuData.sections.filter(s => s.id !== sectionId)
     };
 
-    updateMenuData(updatedData);
+    updateMenuDataAndSync(updatedData);
     showAlert('Section deleted successfully!');
   };
 
@@ -353,6 +353,41 @@ export default function AdminPage() {
       allItems = section.items;
     }
     return allItems;
+  };
+
+  // Sync menu data to menu-data.js file
+  const syncMenuDataToFile = async (menuDataToSync) => {
+    try {
+      const response = await fetch('/api/menu/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ menuData: menuDataToSync }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Failed to sync menu data to file:', result.error);
+        // Show error but don't block the UI
+        showAlert(`Menu updated in memory, but file sync failed: ${result.error}`, 'error');
+      } else {
+        console.log('Menu data synced to file successfully');
+      }
+    } catch (error) {
+      console.error('Error syncing menu data to file:', error);
+      // Show error but don't block the UI - localStorage still works
+      showAlert('Menu updated in localStorage, but file sync failed. Please check console.', 'error');
+    }
+  };
+
+  // Wrapper function to update menu data both in localStorage and file
+  const updateMenuDataAndSync = (newData) => {
+    // Update localStorage first
+    updateMenuData(newData);
+    // Then sync to file (async, won't block)
+    syncMenuDataToFile(newData);
   };
 
   if (!isAuthenticated) {
