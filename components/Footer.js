@@ -1,0 +1,258 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!email) return;
+
+    setStatus("loading");
+
+    // Get existing subscriptions
+    const existingSubscriptions = JSON.parse(
+      localStorage.getItem("subscriptions") || "[]"
+    );
+
+    // Check if email already exists
+    if (existingSubscriptions.some((sub) => sub.email === email)) {
+      setStatus("error");
+      setMessage("This email is already subscribed.");
+      setTimeout(() => {
+        setStatus("idle");
+        setMessage("");
+      }, 3000);
+      return;
+    }
+
+    // Add new subscription
+    const newSubscription = {
+      id: Date.now().toString(),
+      email: email,
+      timestamp: new Date().toISOString(),
+    };
+
+    existingSubscriptions.push(newSubscription);
+    localStorage.setItem(
+      "subscriptions",
+      JSON.stringify(existingSubscriptions)
+    );
+
+    // Dispatch custom event to notify admin page
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("subscriptionAdded"));
+    }
+
+    setTimeout(() => {
+      setStatus("success");
+      setMessage("Subscribed successfully.");
+      setEmail("");
+      setTimeout(() => {
+        setStatus("idle");
+        setMessage("");
+      }, 3000);
+    }, 500);
+  };
+
+  return (
+    <footer
+      className="footer section has-bg-image text-center"
+      style={{
+        backgroundImage: "url('/assets/images/footer-bg.jpg')",
+        paddingTop: "60px",
+        paddingBottom: "40px",
+      }}
+    >
+      <div className="container">
+        <div className="footer-top grid-list">
+          {/* Left Column - Navigation Links */}
+          <ul className="footer-list" style={{ textAlign: "right" }}>
+            <li>
+              <Link href="/" className="label-2 footer-link hover-underline">
+                HOME
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/menu"
+                className="label-2 footer-link hover-underline"
+              >
+                MENUS
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#about"
+                className="label-2 footer-link hover-underline"
+              >
+                ABOUT US
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#chefs"
+                className="label-2 footer-link hover-underline"
+              >
+                OUR CHEFS
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#contact"
+                className="label-2 footer-link hover-underline"
+              >
+                CONTACT
+              </Link>
+            </li>
+          </ul>
+
+          {/* Center Column - Brand & Subscription */}
+          <div className="footer-brand has-before has-after">
+            <Link href="/" className="logo">
+              <Image
+                src="/assets/images/logo.svg"
+                width={70}
+                height={22}
+                loading="lazy"
+                alt="grilli home"
+              />
+            </Link>
+
+            <address className="body-4">
+              Restaurant St, Delicious City, London 9578, UK
+            </address>
+
+            <a href="mailto:booking@grilli.com" className="body-4 contact-link">
+              booking@grilli.com
+            </a>
+
+            <a href="tel:+88123123456" className="body-4 contact-link">
+              Booking Request : +88-123-123456
+            </a>
+
+            <p className="body-4">Open : 09:00 am - 01:00 pm</p>
+
+            <div className="wrapper">
+              <div className="separator"></div>
+              <div className="separator"></div>
+              <div className="separator"></div>
+            </div>
+
+            <p className="title-1">Get News & Offers</p>
+
+            <p className="label-1">
+              Subscribe us & Get <span className="span">25% Off.</span>
+            </p>
+
+            <form action="" className="input-wrapper" onSubmit={handleSubmit}>
+              <div className="icon-wrapper">
+                <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+
+                <input
+                  type="email"
+                  name="email_address"
+                  placeholder="Your email"
+                  autocomplete="off"
+                  className="input-field"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn btn-secondary">
+                <span className="text text-1">Subscribe</span>
+                <span className="text text-2" aria-hidden="true">
+                  Subscribe
+                </span>
+              </button>
+            </form>
+
+            {status === "success" && (
+              <p
+                style={{
+                  marginTop: "10px",
+                  color: "#44ff44",
+                  fontSize: "var(--fontSize-label-2)",
+                }}
+              >
+                {message}
+              </p>
+            )}
+
+            {status === "error" && (
+              <p
+                style={{
+                  marginTop: "10px",
+                  color: "#ff4444",
+                  fontSize: "var(--fontSize-label-2)",
+                }}
+              >
+                {message}
+              </p>
+            )}
+          </div>
+
+          {/* Right Column - Social Media Links */}
+          <ul
+            className="footer-list"
+            style={{
+              textAlign: "left",
+              backgroundImage: "url('/assets/images/footer-bg.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              padding: "20px",
+              borderRadius: "8px",
+            }}
+          >
+            <li>
+              <a href="#" className="label-2 footer-link hover-underline">
+                FACEBOOK
+              </a>
+            </li>
+            <li>
+              <a href="#" className="label-2 footer-link hover-underline">
+                INSTAGRAM
+              </a>
+            </li>
+            <li>
+              <a href="#" className="label-2 footer-link hover-underline">
+                TWITTER
+              </a>
+            </li>
+            <li>
+              <a href="#" className="label-2 footer-link hover-underline">
+                YOUTUBE
+              </a>
+            </li>
+            <li>
+              <a href="#" className="label-2 footer-link hover-underline">
+                GOOGLE MAP
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div className="footer-bottom">
+          <p className="copyright">
+            &copy; 2022 Grilli. All Rights Reserved | Crafted by{" "}
+            <a
+              href="https://github.com/codewithsadee"
+              target="_blank"
+              className="link"
+            >
+              codewithsadee
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
