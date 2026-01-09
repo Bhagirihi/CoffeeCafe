@@ -1,5 +1,5 @@
 {
-  "name": "grilli-restaurant",
+  "name": "le-crumb-bakery-and-pastry-shop",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -21,4 +21,3 @@
     "eslint-config-next": "^14.0.0"
   }
 }
-

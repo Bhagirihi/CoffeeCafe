@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function Preloader() {
   const [loaded, setLoaded] = useState(false);
@@ -8,17 +8,17 @@ export default function Preloader() {
   useEffect(() => {
     const handleLoad = () => {
       setLoaded(true);
-      document.body.classList.add('loaded');
+      document.body.classList.add("loaded");
     };
 
-    if (document.readyState === 'complete') {
+    if (document.readyState === "complete") {
       handleLoad();
     } else {
-      window.addEventListener('load', handleLoad);
+      window.addEventListener("load", handleLoad);
     }
 
     return () => {
-      window.removeEventListener('load', handleLoad);
+      window.removeEventListener("load", handleLoad);
     };
   }, []);
 
@@ -27,8 +27,7 @@ export default function Preloader() {
   return (
     <div className="preload" data-preaload>
       <div className="circle"></div>
-      <p className="text">Grilli</p>
+      <p className="text">Le Crumbs</p>
     </div>
   );
 }
-

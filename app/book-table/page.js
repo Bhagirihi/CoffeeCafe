@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import TopBar from '../../components/TopBar';
-import Preloader from '../../components/Preloader';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import TopBar from "../../components/TopBar";
+import Preloader from "../../components/Preloader";
+import Image from "next/image";
 
 export default function BookTablePage() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    time: '',
-    guests: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    time: "",
+    guests: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [today, setToday] = useState('');
+  const [today, setToday] = useState("");
 
   useEffect(() => {
     // Set minimum date to today
-    const todayDate = new Date().toISOString().split('T')[0];
+    const todayDate = new Date().toISOString().split("T")[0];
     setToday(todayDate);
   }, []);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -37,7 +37,9 @@ export default function BookTablePage() {
     e.preventDefault();
 
     // Get existing bookings
-    const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const existingBookings = JSON.parse(
+      localStorage.getItem("bookings") || "[]"
+    );
 
     // Add new booking
     const newBooking = {
@@ -48,21 +50,21 @@ export default function BookTablePage() {
       date: formData.date,
       time: formData.time,
       message: formData.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     existingBookings.push(newBooking);
-    localStorage.setItem('bookings', JSON.stringify(existingBookings));
+    localStorage.setItem("bookings", JSON.stringify(existingBookings));
 
     setSubmitted(true);
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      date: '',
-      time: '',
-      guests: '',
-      message: ''
+      name: "",
+      email: "",
+      phone: "",
+      date: "",
+      time: "",
+      guests: "",
+      message: "",
     });
 
     setTimeout(() => setSubmitted(false), 5000);
@@ -82,11 +84,11 @@ export default function BookTablePage() {
             aria-label="booking"
             id="booking"
             style={{
-              paddingTop: '120px',
-              minHeight: '60vh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              paddingTop: "120px",
+              minHeight: "60vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <div className="container">
@@ -94,11 +96,12 @@ export default function BookTablePage() {
 
               <h1 className="display-1 hero-title">
                 Book A Table <br />
-                At Grilli
+                At Le Crumbs
               </h1>
 
               <p className="body-2 hero-text">
-                Experience fine dining with us. Reserve your table now and enjoy an unforgettable culinary journey.
+                Experience fine dining with us. Reserve your table now and enjoy
+                an unforgettable culinary journey.
               </p>
             </div>
           </section>
@@ -116,21 +119,27 @@ export default function BookTablePage() {
                   <h2 className="headline-1 text-center">Online Reservation</h2>
 
                   <p className="form-text text-center">
-                    Booking request <a href="tel:+88123123456" className="link">+88-123-123456</a>
+                    Booking request{" "}
+                    <a href="tel:+88123123456" className="link">
+                      +88-123-123456
+                    </a>
                     or fill out the order form
                   </p>
 
                   {submitted && (
-                    <div style={{
-                      padding: '15px',
-                      background: 'var(--gold-crayola)',
-                      color: 'var(--black)',
-                      borderRadius: '8px',
-                      marginBottom: '20px',
-                      fontWeight: 'bold',
-                      textAlign: 'center'
-                    }}>
-                      Thank you! Your reservation has been submitted. We will contact you shortly.
+                    <div
+                      style={{
+                        padding: "15px",
+                        background: "var(--gold-crayola)",
+                        color: "var(--black)",
+                        borderRadius: "8px",
+                        marginBottom: "20px",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      Thank you! Your reservation has been submitted. We will
+                      contact you shortly.
                     </div>
                   )}
 
@@ -175,7 +184,10 @@ export default function BookTablePage() {
 
                   <div className="input-wrapper">
                     <div className="icon-wrapper">
-                      <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="person-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
 
                       <select
                         name="guests"
@@ -196,11 +208,17 @@ export default function BookTablePage() {
                         <option value="8-person">8+ Person</option>
                       </select>
 
-                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="chevron-down"
+                        aria-hidden="true"
+                      ></ion-icon>
                     </div>
 
                     <div className="icon-wrapper">
-                      <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="calendar-clear-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
 
                       <input
                         type="date"
@@ -213,11 +231,17 @@ export default function BookTablePage() {
                         onChange={handleChange}
                       />
 
-                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="chevron-down"
+                        aria-hidden="true"
+                      ></ion-icon>
                     </div>
 
                     <div className="icon-wrapper">
-                      <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="time-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
 
                       <select
                         name="time"
@@ -245,7 +269,10 @@ export default function BookTablePage() {
                         <option value="10:00pm">10 : 00 pm</option>
                       </select>
 
-                      <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+                      <ion-icon
+                        name="chevron-down"
+                        aria-hidden="true"
+                      ></ion-icon>
                     </div>
                   </div>
 
@@ -261,30 +288,38 @@ export default function BookTablePage() {
 
                   <button type="submit" className="btn btn-secondary">
                     <span className="text text-1">Book A Table</span>
-                    <span className="text text-2" aria-hidden="true">Book A Table</span>
+                    <span className="text text-2" aria-hidden="true">
+                      Book A Table
+                    </span>
                   </button>
 
-                  <div id="booking-status-message" style={{
-                    marginTop: '20px',
-                    textAlign: 'center',
-                    display: 'none'
-                  }}></div>
+                  <div
+                    id="booking-status-message"
+                    style={{
+                      marginTop: "20px",
+                      textAlign: "center",
+                      display: "none",
+                    }}
+                  ></div>
                 </form>
 
                 <div
                   className="form-right text-center"
                   style={{
                     backgroundImage: "url('/assets/images/form-pattern.png')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
                   }}
                 >
                   <h2 className="headline-1 text-center">Contact Us</h2>
 
                   <p className="contact-label">Booking Request</p>
 
-                  <a href="tel:+88123123456" className="body-1 contact-number hover-underline">
+                  <a
+                    href="tel:+88123123456"
+                    className="body-1 contact-number hover-underline"
+                  >
                     +88-123-123456
                   </a>
 
@@ -315,8 +350,11 @@ export default function BookTablePage() {
 
                   <p className="contact-label">Email</p>
 
-                  <a href="mailto:booking@grilli.com" className="body-4 contact-link">
-                    booking@grilli.com
+                  <a
+                    href="mailto:booking@lecrumb.com"
+                    className="body-4 contact-link"
+                  >
+                    booking@lecrumb.com
                   </a>
                 </div>
               </div>
@@ -327,7 +365,12 @@ export default function BookTablePage() {
 
       <Footer />
 
-      <a href="#top" className="back-top-btn" data-back-top-btn aria-label="back to top">
+      <a
+        href="#top"
+        className="back-top-btn"
+        data-back-top-btn
+        aria-label="back to top"
+      >
         <ion-icon name="chevron-up"></ion-icon>
       </a>
     </>

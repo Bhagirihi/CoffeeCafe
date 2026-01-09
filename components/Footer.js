@@ -117,11 +117,11 @@ export default function Footer() {
           <div className="footer-brand has-before has-after">
             <Link href="/" className="logo">
               <Image
-                src="/assets/images/logo.svg"
-                width={70}
-                height={22}
+                src="/assets/images/logo.png"
+                width={160}
+                height={60}
                 loading="lazy"
-                alt="grilli home"
+                alt="le crumb home"
               />
             </Link>
 
@@ -129,12 +129,15 @@ export default function Footer() {
               Restaurant St, Delicious City, London 9578, UK
             </address>
 
-            <a href="mailto:booking@grilli.com" className="body-4 contact-link">
-              booking@grilli.com
+            <a
+              href="mailto:booking@lecrumb.com"
+              className="body-4 contact-link"
+            >
+              booking@lecrumb.com
             </a>
 
-            <a href="tel:+88123123456" className="body-4 contact-link">
-              Booking Request : +88-123-123456
+            <a href="tel:+917874766500" className="body-4 contact-link">
+              Booking Request : +91-7874766500
             </a>
 
             <p className="body-4">Open : 09:00 am - 01:00 pm</p>
@@ -242,13 +245,9 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <p className="copyright">
-            &copy; 2022 Grilli. All Rights Reserved | Crafted by{" "}
-            <a
-              href="https://github.com/codewithsadee"
-              target="_blank"
-              className="link"
-            >
-              codewithsadee
+            &copy; 2026 Le Crumbs. All Rights Reserved | Crafted by{" "}
+            <a href="https://dhruvdave.in" target="_blank" className="link">
+              DhruvDave
             </a>
           </p>
         </div>

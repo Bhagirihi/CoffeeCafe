@@ -65,12 +65,13 @@ export default function ServiceSection() {
                   <h3 className="title-4 card-title">
                     <a href="#">{service.title}</a>
                   </h3>
-
-                  <Link href="/menu" className="btn btn-primary">
-                    <span className="text text-1">View All Menu</span>
-                    <span className="text text-2" aria-hidden="true">
-                      View All Menu
+                  <Link href="/menu">
+                    <span className="text text-2 section-subtitle">
+                      View Menu
                     </span>
+                    {/* <span className="text text-2" aria-hidden="true">
+                      View All Menu
+                    </span> */}
                   </Link>
                 </div>
               </div>
