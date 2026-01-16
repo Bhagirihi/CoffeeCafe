@@ -97,15 +97,15 @@ export default function Footer() {
             </li>
             <li>
               <Link
-                href="/#chefs"
+                href="/book-table"
                 className="label-2 footer-link hover-underline"
               >
-                OUR CHEFS
+                Book Table
               </Link>
             </li>
             <li>
               <Link
-                href="/#contact"
+                href="/book-table/#contact"
                 className="label-2 footer-link hover-underline"
               >
                 CONTACT

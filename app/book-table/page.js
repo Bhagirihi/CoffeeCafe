@@ -169,7 +169,7 @@ export default function BookTablePage() {
                   </div>
 
                   <div className="input-wrapper">
-                    <input
+                    {/* <input
                       type="email"
                       name="email"
                       id="booking-email"
@@ -179,10 +179,7 @@ export default function BookTablePage() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                    />
-                  </div>
-
-                  <div className="input-wrapper">
+                    /> */}
                     <div className="icon-wrapper">
                       <ion-icon
                         name="person-outline"
@@ -207,29 +204,6 @@ export default function BookTablePage() {
                         <option value="7-person">7 Person</option>
                         <option value="8-person">8+ Person</option>
                       </select>
-
-                      <ion-icon
-                        name="chevron-down"
-                        aria-hidden="true"
-                      ></ion-icon>
-                    </div>
-
-                    <div className="icon-wrapper">
-                      <ion-icon
-                        name="calendar-clear-outline"
-                        aria-hidden="true"
-                      ></ion-icon>
-
-                      <input
-                        type="date"
-                        name="date"
-                        id="booking-date"
-                        className="input-field"
-                        required
-                        min={today}
-                        value={formData.date}
-                        onChange={handleChange}
-                      />
 
                       <ion-icon
                         name="chevron-down"
@@ -274,8 +248,29 @@ export default function BookTablePage() {
                         aria-hidden="true"
                       ></ion-icon>
                     </div>
-                  </div>
+                    <div className="icon-wrapper">
+                      <ion-icon
+                        name="calendar-clear-outline"
+                        aria-hidden="true"
+                      ></ion-icon>
 
+                      <input
+                        type="date"
+                        name="date"
+                        id="booking-date"
+                        className="input-field"
+                        required
+                        min={today}
+                        value={formData.date}
+                        onChange={handleChange}
+                      />
+
+                      <ion-icon
+                        name="chevron-down"
+                        aria-hidden="true"
+                      ></ion-icon>
+                    </div>
+                  </div>
                   <textarea
                     name="message"
                     id="booking-message-text"
@@ -311,6 +306,7 @@ export default function BookTablePage() {
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                   }}
+                  id="contact"
                 >
                   <h2 className="headline-1 text-center">Contact Us</h2>
 

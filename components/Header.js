@@ -108,18 +108,7 @@ export default function Header() {
 
             <li className="navbar-item">
               <Link
-                href="/#chefs"
-                className="navbar-link hover-underline"
-                onClick={closeNav}
-              >
-                <div className="separator"></div>
-                <span className="span">Our Chefs</span>
-              </Link>
-            </li>
-
-            <li className="navbar-item">
-              <Link
-                href="/#contact"
+                href="/book-table/#contact"
                 className="navbar-link hover-underline"
                 onClick={closeNav}
               >
