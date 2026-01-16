@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import TopBar from "../../components/TopBar";
 import Preloader from "../../components/Preloader";
 import Image from "next/image";
+import { createBooking } from "../../lib/bookings";
 
 export default function BookTablePage() {
   const [formData, setFormData] = useState({
@@ -33,41 +34,37 @@ export default function BookTablePage() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Get existing bookings
-    const existingBookings = JSON.parse(
-      localStorage.getItem("bookings") || "[]"
-    );
+    try {
+      // Create booking in Supabase
+      await createBooking({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        guests: formData.guests,
+        date: formData.date,
+        time: formData.time,
+        message: formData.message,
+      });
 
-    // Add new booking
-    const newBooking = {
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      guests: formData.guests,
-      date: formData.date,
-      time: formData.time,
-      message: formData.message,
-      timestamp: new Date().toISOString(),
-    };
+      setSubmitted(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        date: "",
+        time: "",
+        guests: "",
+        message: "",
+      });
 
-    existingBookings.push(newBooking);
-    localStorage.setItem("bookings", JSON.stringify(existingBookings));
-
-    setSubmitted(true);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      date: "",
-      time: "",
-      guests: "",
-      message: "",
-    });
-
-    setTimeout(() => setSubmitted(false), 5000);
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+      alert("There was an error submitting your booking. Please try again.");
+    }
   };
 
   return (

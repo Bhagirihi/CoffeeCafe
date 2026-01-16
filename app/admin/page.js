@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { useMenu } from '../../hooks/useMenu';
 import { saveMenuData } from '../../lib/menu-utils';
 import { formatPrice, formatPriceRange } from '../../lib/menu-data';
+import { getBookings, updateBookingStatus, deleteBooking } from '../../lib/bookings';
+import { getSubscriptions, deleteSubscription } from '../../lib/subscriptions';
+import { supabase } from '../../lib/supabase';
 import Image from 'next/image';
 
 export default function AdminPage() {
@@ -34,20 +37,35 @@ export default function AdminPage() {
     isSpecialDish: false
   });
 
+  const loadBookings = async () => {
+    try {
+      const data = await getBookings();
+      setBookings(data);
+    } catch (error) {
+      console.error('Error loading bookings:', error);
+      showAlert('Error loading bookings', 'error');
+    }
+  };
+
+  const loadSubscriptions = async () => {
+    try {
+      const data = await getSubscriptions();
+      setSubscriptions(data);
+    } catch (error) {
+      console.error('Error loading subscriptions:', error);
+      showAlert('Error loading subscriptions', 'error');
+    }
+  };
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const auth = sessionStorage.getItem('adminLoggedIn');
       if (auth === 'true') {
         setIsAuthenticated(true);
+        // Load data from Supabase when authenticated
+        loadBookings();
+        loadSubscriptions();
       }
-
-      // Load bookings
-      const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-      setBookings(storedBookings);
-
-      // Load subscriptions
-      const storedSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
-      setSubscriptions(storedSubscriptions);
 
       // Scroll to top button
       const handleScroll = () => {
@@ -55,33 +73,37 @@ export default function AdminPage() {
       };
       window.addEventListener('scroll', handleScroll);
 
-      // Listen for storage changes to update subscriptions in real-time
-      const handleStorageChange = (e) => {
-        if (e.key === 'subscriptions') {
-          const storedSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
-          setSubscriptions(storedSubscriptions);
-        }
-        if (e.key === 'bookings') {
-          const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-          setBookings(storedBookings);
-        }
-      };
-      window.addEventListener('storage', handleStorageChange);
+      // Set up real-time subscriptions for Supabase changes
+      let bookingsChannel, subscriptionsChannel;
+      if (isAuthenticated) {
+        // Subscribe to bookings changes
+        bookingsChannel = supabase
+          .channel('bookings-changes')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+            loadBookings();
+          })
+          .subscribe();
 
-      // Also listen for custom events (for same-tab updates)
-      const handleCustomStorageChange = () => {
-        const storedSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
-        setSubscriptions(storedSubscriptions);
-      };
-      window.addEventListener('subscriptionAdded', handleCustomStorageChange);
+        // Subscribe to subscriptions changes
+        subscriptionsChannel = supabase
+          .channel('subscriptions-changes')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'subscriptions' }, () => {
+            loadSubscriptions();
+          })
+          .subscribe();
+      }
 
       return () => {
         window.removeEventListener('scroll', handleScroll);
-        window.removeEventListener('storage', handleStorageChange);
-        window.removeEventListener('subscriptionAdded', handleCustomStorageChange);
+        if (bookingsChannel) {
+          supabase.removeChannel(bookingsChannel);
+        }
+        if (subscriptionsChannel) {
+          supabase.removeChannel(subscriptionsChannel);
+        }
       };
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const showAlert = (message, type = 'success') => {
     setAlert({ show: true, message, type });
@@ -288,40 +310,49 @@ export default function AdminPage() {
     if (fileInput) fileInput.value = '';
   };
 
-  const markBookingAsProcessed = (index) => {
-    const updatedBookings = [...bookings];
-    updatedBookings[index].processed = true;
-    setBookings(updatedBookings);
-    localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-    showAlert('Booking marked as processed!');
+  const markBookingAsProcessed = async (bookingId) => {
+    try {
+      await updateBookingStatus(bookingId, 'processed');
+      await loadBookings();
+      showAlert('Booking marked as processed!');
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      showAlert('Error updating booking', 'error');
+    }
   };
 
-  const handleDeleteBooking = (index) => {
+  const handleDeleteBooking = async (bookingId) => {
     if (!confirm('Are you sure you want to delete this booking?')) return;
-    const updatedBookings = bookings.filter((_, i) => i !== index);
-    setBookings(updatedBookings);
-    localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-    showAlert('Booking deleted successfully!');
+    try {
+      await deleteBooking(bookingId);
+      await loadBookings();
+      showAlert('Booking deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      showAlert('Error deleting booking', 'error');
+    }
   };
 
-  const refreshBookings = () => {
-    const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-    setBookings(storedBookings);
+  const refreshBookings = async () => {
+    await loadBookings();
     showAlert('Bookings refreshed!');
   };
 
-  const refreshSubscriptions = () => {
-    const storedSubscriptions = JSON.parse(localStorage.getItem('subscriptions') || '[]');
-    setSubscriptions(storedSubscriptions);
+  const refreshSubscriptions = async () => {
+    await loadSubscriptions();
     showAlert('Subscriptions refreshed!');
   };
 
-  const handleDeleteSubscription = (subscriptionId) => {
+  const handleDeleteSubscription = async (subscriptionId) => {
     if (!confirm('Are you sure you want to delete this subscription?')) return;
-    const updatedSubscriptions = subscriptions.filter((sub) => sub.id !== subscriptionId);
-    setSubscriptions(updatedSubscriptions);
-    localStorage.setItem('subscriptions', JSON.stringify(updatedSubscriptions));
-    showAlert('Subscription deleted successfully!');
+    try {
+      await deleteSubscription(subscriptionId);
+      await loadSubscriptions();
+      showAlert('Subscription deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting subscription:', error);
+      showAlert('Error deleting subscription', 'error');
+    }
   };
 
   const formatDate = (dateString) => {
@@ -494,8 +525,8 @@ export default function AdminPage() {
   }
 
   const sortedBookings = [...bookings].sort((a, b) => {
-    const dateA = new Date(a.timestamp || a.createdAt || 0);
-    const dateB = new Date(b.timestamp || b.createdAt || 0);
+    const dateA = new Date(a.created_at || a.timestamp || a.createdAt || 0);
+    const dateB = new Date(b.created_at || b.timestamp || b.createdAt || 0);
     return dateB - dateA;
   });
 
@@ -655,11 +686,11 @@ export default function AdminPage() {
               </div>
             ) : (
               [...subscriptions].sort((a, b) => {
-                const dateA = new Date(a.timestamp || 0);
-                const dateB = new Date(b.timestamp || 0);
+                const dateA = new Date(a.created_at || a.timestamp || 0);
+                const dateB = new Date(b.created_at || b.timestamp || 0);
                 return dateB - dateA;
               }).map((subscription, index) => {
-                const subscribedDate = subscription.timestamp ? formatDate(subscription.timestamp) : 'N/A';
+                const subscribedDate = subscription.created_at || subscription.timestamp ? formatDate(subscription.created_at || subscription.timestamp) : 'N/A';
                 return (
                   <div
                     key={subscription.id || index}
@@ -760,12 +791,14 @@ export default function AdminPage() {
               </div>
             ) : (
               sortedBookings.map((booking, index) => {
-                const isProcessed = booking.processed || false;
+                const isProcessed = booking.status === 'processed' || booking.status === 'completed';
                 const bookingDate = booking.date ? formatDate(booking.date) : 'N/A';
                 const bookingTime = booking.time ? formatTime(booking.time) : 'N/A';
-                const submittedDate = booking.timestamp || booking.createdAt ? formatDate(booking.timestamp || booking.createdAt) : 'N/A';
-                const isExpanded = expandedBookings[index] || false;
-                const guests = booking.guests ? booking.guests.replace('-person', '') : 'N/A';
+                const submittedDate = booking.created_at ? formatDate(booking.created_at) : 'N/A';
+                const isExpanded = expandedBookings[booking.id] || false;
+                const guests = typeof booking.guests === 'string'
+                  ? booking.guests.replace('-person', '')
+                  : booking.guests || 'N/A';
 
                 return (
                   <div
@@ -859,7 +892,7 @@ export default function AdminPage() {
                         </span>
                         {!isProcessed && (
                           <button
-                            onClick={() => markBookingAsProcessed(index)}
+                            onClick={() => markBookingAsProcessed(booking.id)}
                             style={{
                               padding: '10px 20px',
                               border: '2px solid #44ff44',
@@ -875,7 +908,7 @@ export default function AdminPage() {
                           </button>
                         )}
                         <button
-                          onClick={() => handleDeleteBooking(index)}
+                          onClick={() => handleDeleteBooking(booking.id)}
                           style={{
                             padding: '10px 20px',
                             border: '2px solid #ff4444',
@@ -891,11 +924,11 @@ export default function AdminPage() {
                         </button>
                       </div>
                     </div>
-                    
+
                     {/* Accordion for Additional Details */}
                     <div>
                       <button
-                        onClick={() => setExpandedBookings({ ...expandedBookings, [index]: !isExpanded })}
+                        onClick={() => setExpandedBookings({ ...expandedBookings, [booking.id]: !isExpanded })}
                         style={{
                           width: '100%',
                           padding: '12px 20px',
@@ -985,7 +1018,7 @@ export default function AdminPage() {
                               </div>
                             </div>
                           </div>
-                          {booking.message && (
+                          {(booking.message || booking.special_requests) && (
                             <div style={{ marginTop: '15px' }}>
                               <div style={{
                                 color: 'var(--gold-crayola)',
@@ -997,7 +1030,7 @@ export default function AdminPage() {
                                 Special Requests
                               </div>
                               <div style={{ color: 'var(--quick-silver)', fontStyle: 'italic' }}>
-                                {booking.message}
+                                {booking.message || booking.special_requests}
                               </div>
                             </div>
                           )}

@@ -3,62 +3,48 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { createSubscription } from "../lib/subscriptions";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email) return;
 
     setStatus("loading");
 
-    // Get existing subscriptions
-    const existingSubscriptions = JSON.parse(
-      localStorage.getItem("subscriptions") || "[]"
-    );
+    try {
+      const result = await createSubscription(email);
 
-    // Check if email already exists
-    if (existingSubscriptions.some((sub) => sub.email === email)) {
+      if (result.success) {
+        setStatus("success");
+        setMessage("Subscribed successfully.");
+        setEmail("");
+        setTimeout(() => {
+          setStatus("idle");
+          setMessage("");
+        }, 3000);
+      } else {
+        setStatus("error");
+        setMessage(result.message || "This email is already subscribed.");
+        setTimeout(() => {
+          setStatus("idle");
+          setMessage("");
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Error subscribing:", error);
       setStatus("error");
-      setMessage("This email is already subscribed.");
+      setMessage("An error occurred. Please try again.");
       setTimeout(() => {
         setStatus("idle");
         setMessage("");
       }, 3000);
-      return;
     }
-
-    // Add new subscription
-    const newSubscription = {
-      id: Date.now().toString(),
-      email: email,
-      timestamp: new Date().toISOString(),
-    };
-
-    existingSubscriptions.push(newSubscription);
-    localStorage.setItem(
-      "subscriptions",
-      JSON.stringify(existingSubscriptions)
-    );
-
-    // Dispatch custom event to notify admin page
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("subscriptionAdded"));
-    }
-
-    setTimeout(() => {
-      setStatus("success");
-      setMessage("Subscribed successfully.");
-      setEmail("");
-      setTimeout(() => {
-        setStatus("idle");
-        setMessage("");
-      }, 3000);
-    }, 500);
   };
 
   return (

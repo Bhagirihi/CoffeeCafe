@@ -21,8 +21,12 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
-    const dish = getFirstSpecialDish();
-    setSpecialDish(dish);
+    async function loadSpecialDish() {
+      const dish = await getFirstSpecialDish();
+      setSpecialDish(dish);
+    }
+
+    loadSpecialDish();
 
     // Get menu preview (first 6 items, prioritizing special dishes)
     const allItems = [];
