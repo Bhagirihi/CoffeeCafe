@@ -1,7 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getMenuData, saveMenuData, initializeMenuData } from '../lib/menu-utils';
+import { useState, useEffect } from "react";
+import {
+  getMenuData,
+  saveMenuData,
+  initializeMenuData,
+} from "../lib/menu-utils";
 
 export function useMenu() {
   const [menuData, setMenuData] = useState({ sections: [] });
@@ -17,7 +21,7 @@ export function useMenu() {
         setMenuData(data);
         setError(null);
       } catch (err) {
-        console.error('Error loading menu data:', err);
+        console.error("Error loading menu data:", err);
         setError(err.message);
         // Fallback to empty sections on error
         setMenuData({ sections: [] });
@@ -30,12 +34,13 @@ export function useMenu() {
   }, []);
 
   const updateMenuData = async (newData) => {
+    console.log("Updating menu data in hook:", newData);
     try {
       setMenuData(newData);
       await saveMenuData(newData);
       setError(null);
     } catch (err) {
-      console.error('Error saving menu data:', err);
+      console.error("Error saving menu data:", err);
       setError(err.message);
       throw err;
     }
